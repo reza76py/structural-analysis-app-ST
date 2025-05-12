@@ -2,33 +2,32 @@ import plotly.graph_objects as go
 import numpy as np
 
 def plot_space_truss_xy(nodes):
+    if not nodes:
+        return go.Figure().update_layout(title="No nodes provided.")
 
-    # Define elements (connections between nodes)
+    nodes = np.array(nodes)
+
     elements = [
-        [0, 1], [1, 2], [2, 0],    # Base triangle
-    ]
+        [0, 1], [1, 2], [2, 0]
+    ] if len(nodes) >= 3 else []
 
-    # Create a Plotly figure for the XY view
     fig = go.Figure()
 
-    # Plot the nodes as scatter points (XY view)
     fig.add_trace(go.Scatter(
-        x=nodes[:, 0],  # X values
-        y=nodes[:, 1],  # Y values
+        x=nodes[:, 0],
+        y=nodes[:, 1],
         mode='markers+text',
         marker=dict(size=6, color='blue'),
         text=["N{}".format(i+1) for i in range(len(nodes))],
-        textposition="top center",
+        textposition="top center"
     ))
 
-    # Plot the elements (truss members) as lines connecting the nodes (XY view)
     for element in elements:
-        node_start = nodes[element[0]]
-        node_end = nodes[element[1]]
-        
+        start = nodes[element[0]]
+        end = nodes[element[1]]
         fig.add_trace(go.Scatter(
-            x=[node_start[0], node_end[0]],
-            y=[node_start[1], node_end[1]],
+            x=[start[0], end[0]],
+            y=[start[1], end[1]],
             mode='lines',
             line=dict(color='red', width=4)
         ))

@@ -1,21 +1,18 @@
-# data_input/nodes_data.py
+import streamlit as st
 
-import pandas as pd
-import numpy as np
+def init_nodes():
+    """Initialize the nodes list in session state."""
+    if "nodes" not in st.session_state:
+        st.session_state.nodes = []
 
-def read_nodes_from_excel(file_path="data_input/nodes.xlsx"):
-    """
-    Reads node coordinates (X, Y, Z) from an Excel file and returns them as a NumPy array.
-    The Excel file must have columns named 'x', 'y', 'z' (case-insensitive).
-    """
-    df = pd.read_excel(file_path)
+def add_node(x, y, z):
+    """Add a new node to session state."""
+    st.session_state.nodes.append([x, y, z])
 
-    # Normalize column names
-    df.columns = df.columns.str.lower()
+def get_nodes():
+    """Get the current list of nodes."""
+    return st.session_state.get("nodes", [])
 
-    # Drop rows with missing values
-    df = df.dropna(subset=['x', 'y', 'z'])
-
-    # Extract and return coordinates
-    nodes = df[['x', 'y', 'z']].values
-    return nodes
+def clear_nodes():
+    """Clear all saved nodes."""
+    st.session_state["nodes"] = []

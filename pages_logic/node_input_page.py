@@ -1,23 +1,31 @@
 import streamlit as st
-from data_input.nodes_data import init_nodes, add_node, get_nodes, clear_nodes
+from data_input.nodes_sql import save_node_to_db, fetch_nodes_from_db
 
 def render_node_input():
     st.title("🧮 Node Input")
-    
-    init_nodes()
 
-    x = st.number_input("X Coordinate")
-    y = st.number_input("Y Coordinate")
-    z = st.number_input("Z Coordinate")
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        x_input = st.text_input("X", value="0")
+    with col2:
+        y_input = st.text_input("Y", value="0")
+    with col3:
+        z_input = st.text_input("Z", value="0")
+
+    try:
+        x = int(x_input)
+        y = int(y_input)
+        z = int(z_input)
+    except ValueError:
+        st.error("❌ Please enter valid integers.")
+        st.stop()
 
     if st.button("➕ Add Node"):
-        add_node(x, y, z)
-        st.success(f"Node added: ({x}, {y}, {z})")
+        save_node_to_db(x, y, z)
+        st.success(f"✅ Node saved to MySQL: ({x}, {y}, {z})")
 
-    st.subheader("📋 Current Nodes:")
-    for i, node in enumerate(get_nodes()):
-        st.write(f"Node {i+1}: {node}")
-
-    if st.button("🗑️ Clear Nodes"):
-        clear_nodes()
-        st.warning("All nodes cleared.")
+    st.subheader("📋 Saved Nodes from Database:")
+    nodes = fetch_nodes_from_db()
+    for node in nodes:
+        st.write(f"Node {node[0]}: (X={node[1]}, Y={node[2]}, Z={node[3]})")

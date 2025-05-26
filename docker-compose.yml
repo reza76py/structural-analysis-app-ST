@@ -2,21 +2,36 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     ports:
-      - "8502:8501"  # Host:Container port mapping
+      - "8502:8501"
     environment:
-      - IN_DOCKER=true  # Flag for Docker detection
-    extra_hosts:
-      - "host.docker.internal:host-gateway"  # Critical for host access
+      - IN_DOCKER=true
+    depends_on:
+      - db  # Wait for MySQL container
     volumes:
-      - .:/app  # Bind-mount for live code updates
+      - .:/app
     networks:
       - space_truss_net
-    restart: unless-stopped  # Auto-recover on crashes
+    restart: unless-stopped
+
+  db:  # New MySQL service
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: space_truss_db_st
+      MYSQL_USER: space_truss_db_st_user
+      MYSQL_PASSWORD: 934
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql  # Persistent storage
+      - ./db_init:/docker-entrypoint-initdb.d
+    networks:
+      - space_truss_net
+    ports:
+      - "3307:3306"  # Optional: Only include if you need external access
 
 networks:
   space_truss_net:
-    driver: bridge  # Explicit network type
+
+volumes:
+  mysql_data:  # Named volume for database persistence

@@ -24,7 +24,7 @@ import mysql.connector
 
 def get_connection():
     in_docker = os.getenv("IN_DOCKER", "false").lower() == "true"
-    host = "host.docker.internal" if in_docker else "localhost"
+    host = "db" if in_docker else "localhost"  # Changed to service name
     try:
         return mysql.connector.connect(
             host=host,

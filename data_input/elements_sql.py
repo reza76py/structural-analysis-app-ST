@@ -16,7 +16,7 @@ def save_element_to_db(start_node_id, end_node_id):
 def fetch_elements_from_db():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT start_node_id, end_node_id FROM elements")
+    cursor.execute("SELECT start_node, end_node FROM elements")
     elements = cursor.fetchall()
     conn.close()
     return elements

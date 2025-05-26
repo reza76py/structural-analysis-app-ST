@@ -12,3 +12,7 @@ __pycache__/
 *.swo
 .idea/
 .vscode/
+
+# ─── Docker ──────────────────────────────────────────────
+*.log                 # Any logs you may generate
+**/logs/              # Optional logs folder

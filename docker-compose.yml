@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8502:8501"  # Host:Container port mapping
+    environment:
+      - IN_DOCKER=true  # Flag for Docker detection
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Critical for host access
+    volumes:
+      - .:/app  # Bind-mount for live code updates
+    networks:
+      - space_truss_net
+    restart: unless-stopped  # Auto-recover on crashes
+
+networks:
+  space_truss_net:
+    driver: bridge  # Explicit network type

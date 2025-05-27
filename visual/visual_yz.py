@@ -48,7 +48,7 @@ def plot_space_truss_yz(nodes, elements, x_section=None, filter_mode=None):
             name="Filtered Nodes"
         ))
 
-    for start_id, end_id in elements:
+    for elem_id, (_, start_id, end_id) in enumerate(elements, 1):
         start = id_to_coord.get(start_id)
         end = id_to_coord.get(end_id)
 
@@ -71,5 +71,13 @@ def plot_space_truss_yz(nodes, elements, x_section=None, filter_mode=None):
                 hoverinfo='text',
                 hovertext=hover_text
             ))
+
+    fig.update_layout(
+        title="2D Truss Visualization (YZ Plane)",
+        xaxis_title="Y",
+        yaxis_title="Z",
+        showlegend=True,
+        margin=dict(l=0, r=0, b=0, t=30)
+    )
 
     return fig

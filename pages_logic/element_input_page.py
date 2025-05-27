@@ -33,12 +33,13 @@ def render_element_input():
     if st.button("➕ Add Element"):
         if start_id == end_id:
             st.warning("Start and end nodes must be different.")
-        else:
-            save_element_to_db(start_id, end_id)
+        elif save_element_to_db(start_id, end_id):
             st.success(f"Element added: Node {start_id} → Node {end_id}")
+        else:
+            st.warning("Element (or reverse) already exists!")
 
     # Display from DB
     st.subheader("📋 Current Elements (from MySQL):")
     elements = fetch_elements_from_db()
-    for i, (start_node, end_node) in enumerate(elements):
-        st.write(f"Element {i+1}: Node {start_node} → Node {end_node}")
+    for elem in elements:  # elem is now (id, start, end)
+        st.write(f"Element {elem[0]}: Node {elem[1]} → Node {elem[2]}")

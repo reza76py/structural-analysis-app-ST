@@ -4,7 +4,7 @@ def plot_space_truss_xy(nodes, elements, z_section=None, filter_mode=None):
     if not nodes:
         return go.Figure().update_layout(title="⚠️ No nodes provided.")
 
-    # 🔹 Step 1: Classify nodes into filtered and unfiltered
+    # 🔹 Step 1: Classify nodes into filtered and unfiltered based on Z
     filtered_nodes = []
     unfiltered_nodes = []
 
@@ -20,15 +20,14 @@ def plot_space_truss_xy(nodes, elements, z_section=None, filter_mode=None):
             else:
                 unfiltered_nodes.append(node)
     else:
-        # If no filter is applied, treat all as filtered
-        filtered_nodes = nodes
+        filtered_nodes = nodes  # No filter applied
 
     filtered_node_ids = set(n[0] for n in filtered_nodes)
     id_to_coord = {node_id: (x, y) for node_id, x, y, _ in nodes}
 
     fig = go.Figure()
 
-    # 🔹 Step 2: Plot unfiltered nodes (faded gray)
+    # 🔹 Step 2: Plot unfiltered nodes (gray)
     if unfiltered_nodes:
         fig.add_trace(go.Scatter(
             x=[x for (_, x, _, _) in unfiltered_nodes],
@@ -52,8 +51,8 @@ def plot_space_truss_xy(nodes, elements, z_section=None, filter_mode=None):
             name="Filtered Nodes"
         ))
 
-    # 🔹 Elements with hover tooltips
-    for start_id, end_id in elements:
+    # 🔹 Step 4: Plot elements with line style depending on filter match
+    for elem_id, (_, start_id, end_id) in enumerate(elements, 1):
         start = id_to_coord.get(start_id)
         end = id_to_coord.get(end_id)
 
@@ -71,15 +70,18 @@ def plot_space_truss_xy(nodes, elements, z_section=None, filter_mode=None):
                 x=[start[0], end[0]],
                 y=[start[1], end[1]],
                 mode='lines',
-                line=dict(
-                    color=line_color,
-                    width=4,
-                    dash=line_style
-                ),
+                line=dict(color=line_color, width=4, dash=line_style),
                 name="In Filter" if both_inside else "Crosses Filter",
                 hoverinfo='text',
                 hovertext=hover_text
             ))
 
+    fig.update_layout(
+        title="2D Truss Visualization (XY Plane)",
+        xaxis_title="X",
+        yaxis_title="Y",
+        showlegend=True,
+        margin=dict(l=0, r=0, b=0, t=30)
+    )
 
     return fig

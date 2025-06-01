@@ -7,6 +7,7 @@ from visual.visual_yz import plot_space_truss_yz
 from data_input.nodes_sql import fetch_nodes_from_db
 from data_input.elements_sql import fetch_elements_from_db
 from data_input.supports_sql import fetch_supports_from_db
+from data_input.loads_sql import fetch_loads_from_db
 
 
 def render_structure_view():
@@ -16,7 +17,7 @@ def render_structure_view():
     nodes = fetch_nodes_from_db()
     elements = fetch_elements_from_db()
     supports = fetch_supports_from_db()
-
+    loads = fetch_loads_from_db()
 
     # ✅ View selection
     view_option = st.sidebar.radio("Choose view:", ["3D", "2D_xy", "2D_xz", "2D_yz"], key="view_option")
@@ -47,7 +48,7 @@ def render_structure_view():
 
     # ✅ Plot based on view
     if view_option == "3D":
-        fig = plot_space_truss(nodes, elements, supports)
+        fig = plot_space_truss(nodes, elements, supports, loads)
     elif view_option == "2D_xy":
         fig = plot_space_truss_xy(
             nodes, elements,

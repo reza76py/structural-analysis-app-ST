@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 
-def plot_space_truss(nodes, elements, supports=[]):
+def plot_space_truss(nodes, elements, supports=[], loads=[]):
     if not nodes:
         return go.Figure().update_layout(title="⚠️ No nodes provided")
 
@@ -99,6 +99,63 @@ def plot_space_truss(nodes, elements, supports=[]):
                 hoverinfo='text',
                 hovertext=f"🔒 Z-restrained at Node {node_id}"
             ))
+
+
+        scale = 0.2  # Increased for visibility
+
+    # 🟠 Loads
+    scale = 0.2
+    for load in loads:
+        _, node_id, x, y, z, fx, fy, fz = load
+        if fx != 0:
+            fig.add_trace(go.Scatter3d(
+                x=[x, x + fx * scale], y=[y, y], z=[z, z],
+                mode='lines',
+                line=dict(color='red', width=3),
+                showlegend=False,
+                hoverinfo='text',
+                hovertext=f"Fx = {fx} at Node {node_id}"
+            ))
+            fig.add_trace(go.Scatter3d(
+                x=[x], y=[y], z=[z],
+                mode='markers',
+                marker=dict(size=3, color='red'),
+                showlegend=False,
+                hoverinfo='skip'
+            ))
+        if fy != 0:
+            fig.add_trace(go.Scatter3d(
+                x=[x, x], y=[y, y + fy * scale], z=[z, z],
+                mode='lines',
+                line=dict(color='green', width=3),
+                showlegend=False,
+                hoverinfo='text',
+                hovertext=f"Fy = {fy} at Node {node_id}"
+            ))
+            fig.add_trace(go.Scatter3d(
+                x=[x], y=[y], z=[z],
+                mode='markers',
+                marker=dict(size=3, color='green'),
+                showlegend=False,
+                hoverinfo='skip'
+            ))
+        if fz != 0:
+            fig.add_trace(go.Scatter3d(
+                x=[x, x], y=[y, y], z=[z, z + fz * scale],
+                mode='lines',
+                line=dict(color='blue', width=3),
+                showlegend=False,
+                hoverinfo='text',
+                hovertext=f"Fz = {fz} at Node {node_id}"
+            ))
+            fig.add_trace(go.Scatter3d(
+                x=[x], y=[y], z=[z],
+                mode='markers',
+                marker=dict(size=3, color='blue'),
+                showlegend=False,
+                hoverinfo='skip'
+            ))
+        
 
     # 📐 Layout settings
     fig.update_layout(

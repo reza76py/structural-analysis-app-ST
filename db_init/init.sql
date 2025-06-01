@@ -26,3 +26,13 @@ CREATE TABLE IF NOT EXISTS supports (
     FOREIGN KEY (node_id) REFERENCES nodes(id),
     UNIQUE (node_id)
 );
+
+CREATE TABLE IF NOT EXISTS loads (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    node_id INT NOT NULL,
+    fx FLOAT DEFAULT 0,
+    fy FLOAT DEFAULT 0,
+    fz FLOAT DEFAULT 0,
+    FOREIGN KEY (node_id) REFERENCES nodes(id),
+    UNIQUE (node_id)
+);

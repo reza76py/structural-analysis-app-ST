@@ -1,0 +1,36 @@
+# 🐍 Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🧪 Virtual environment
+venv/
+.env
+
+# 🪟 OS files
+.DS_Store
+Thumbs.db
+
+# 🧾 Logs and data
+*.log
+*.db
+*.sqlite3
+
+# 🧠 Notebooks
+*.ipynb
+
+# 📂 Git
+.git/
+.gitignore
+
+# 🛠️ Node
+node_modules/
+
+# 📸 Other
+*.png
+*.jpg
+*.jpeg
+*.mp4
+screenshots/
+test-data/

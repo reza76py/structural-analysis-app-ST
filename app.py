@@ -2,6 +2,7 @@ import streamlit as st
 from pages_logic.node_input_page import render_node_input
 from pages_logic.element_input_page import render_element_input
 from pages_logic.structure_page import render_structure_view
+from pages_logic.support_input_page import render_support_input
 
 
 st.set_page_config(
@@ -12,11 +13,14 @@ st.set_page_config(
 
 
 st.sidebar.title("Space Truss Menu")
-selectbox_page = st.sidebar.selectbox("Navigate to (Selectbox)", ["Nodes Input", "Element Input", "Structure"])
+selectbox_page = st.sidebar.selectbox("Navigate to (Selectbox)", ["Nodes Input", "Element Input", "Supports Input", "Structure"])
 
 if selectbox_page == "Nodes Input":
     render_node_input()
 elif selectbox_page == "Element Input":
     render_element_input()
+
+elif selectbox_page == "Supports Input":
+    render_support_input()    
 elif selectbox_page == "Structure":
     render_structure_view()

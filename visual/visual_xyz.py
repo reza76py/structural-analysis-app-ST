@@ -1,6 +1,6 @@
 import plotly.graph_objects as go
 
-def plot_space_truss(nodes, elements):
+def plot_space_truss(nodes, elements, supports=[]):
     if not nodes:
         return go.Figure().update_layout(title="⚠️ No nodes provided")
 
@@ -40,6 +40,67 @@ def plot_space_truss(nodes, elements):
                 showlegend=False
             ))
 
+    # 🟡 Plot support arrows and center dots
+    arrow_len = 1.5  # arrow length
+
+    for support in supports:
+        _, node_id, x, y, z, x_rest, y_rest, z_rest = support
+
+        # ⚫ Base dot at support node (for tidiness)
+        if x_rest or y_rest or z_rest:
+            fig.add_trace(go.Scatter3d(
+                x=[x],
+                y=[y],
+                z=[z],
+                mode='markers',
+                marker=dict(size=4, color='black'),
+                showlegend=False,
+                hoverinfo='skip'
+            ))
+
+        # X-direction arrow (←)
+        if x_rest:
+            fig.add_trace(go.Scatter3d(
+                x=[x - 0.5*arrow_len, x + 0.5*arrow_len],
+                y=[y, y],
+                z=[z, z],
+                mode='lines',
+                line=dict(color='red', width=15, dash='dot'),
+                opacity=0.8,
+                showlegend=False,
+                hoverinfo='text',
+                hovertext=f"🔒 X-restrained at Node {node_id}"
+            ))
+
+        # Y-direction arrow (↓)
+        if y_rest:
+            fig.add_trace(go.Scatter3d(
+                x=[x, x],
+                y=[y - 0.5*arrow_len, y + 0.5*arrow_len],
+                z=[z, z],
+                mode='lines',
+                line=dict(color='green', width=15, dash='dot'),
+                opacity=0.8,
+                showlegend=False,
+                hoverinfo='text',
+                hovertext=f"🔒 Y-restrained at Node {node_id}"
+            ))
+
+        # Z-direction arrow (↓)
+        if z_rest:
+            fig.add_trace(go.Scatter3d(
+                x=[x, x],
+                y=[y, y],
+                z=[z - 0.5*arrow_len, z + 0.5*arrow_len],
+                mode='lines',
+                line=dict(color='blue', width=15, dash='dot'),
+                opacity=0.8,
+                showlegend=False,
+                hoverinfo='text',
+                hovertext=f"🔒 Z-restrained at Node {node_id}"
+            ))
+
+    # 📐 Layout settings
     fig.update_layout(
         scene=dict(
             xaxis_title='X',

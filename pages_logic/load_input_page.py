@@ -15,17 +15,23 @@ def render_load_input():
     selected_label = st.selectbox("Select Node for Load", options=list(node_options.keys()))
     selected_node_id = node_options[selected_label]
 
-    # 🎯 Force inputs
-    col1, col2, col3 = st.columns(3)
+    # 🎯 New Input Style: Magnitude + Direction (angles)
+    col1, col2 = st.columns(2)
     with col1:
-        fx = st.number_input("Force X (Fx)", value=0.0)
+        magnitude = st.number_input("Magnitude (N)", min_value=0.0, value=100.0)
     with col2:
-        fy = st.number_input("Force Y (Fy)", value=0.0)
-    with col3:
-        fz = st.number_input("Force Z (Fz)", value=0.0)
+        st.caption("Direction angles in degrees (relative to X, Y, Z axes)")
+
+    colx, coly, colz = st.columns(3)
+    with colx:
+        theta_x = st.number_input("θₓ (deg)", value=0.0)
+    with coly:
+        theta_y = st.number_input("θᵧ (deg)", value=90.0)
+    with colz:
+        theta_z = st.number_input("θ𝓏 (deg)", value=90.0)
 
     if st.button("➕ Add / Update Load"):
-        if save_load_to_db(selected_node_id, fx, fy, fz):
+        if save_load_to_db(selected_node_id, magnitude, theta_x, theta_y, theta_z):
             st.success(f"✅ Load saved for Node {selected_node_id}")
         else:
             st.error("❌ Failed to save load.")
@@ -37,8 +43,8 @@ def render_load_input():
         st.info("No loads defined yet.")
     else:
         for load in loads:
-            load_id, node_id, x, y, z, fx, fy, fz = load
+            load_id, node_id, x, y, z, mag, tx, ty, tz = load
             st.write(
                 f"Load {load_id} → Node {node_id} at ({x}, {y}, {z}) | "
-                f"Fx: {fx}, Fy: {fy}, Fz: {fz}"
+                f"Magnitude: {mag} N | θₓ: {tx}°, θᵧ: {ty}°, θ𝓏: {tz}°"
             )

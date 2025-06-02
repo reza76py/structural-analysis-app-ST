@@ -1,4 +1,5 @@
 import plotly.graph_objects as go
+from math import cos, radians
 
 def plot_space_truss(nodes, elements, supports=[], loads=[]):
     if not nodes:
@@ -103,58 +104,44 @@ def plot_space_truss(nodes, elements, supports=[], loads=[]):
 
         scale = 0.2  # Increased for visibility
 
-    # 🟠 Loads
+    # 🟠 Loads - Single vector from magnitude + direction
     scale = 0.2
     for load in loads:
-        _, node_id, x, y, z, fx, fy, fz = load
-        if fx != 0:
-            fig.add_trace(go.Scatter3d(
-                x=[x, x + fx * scale], y=[y, y], z=[z, z],
-                mode='lines',
-                line=dict(color='red', width=3),
-                showlegend=False,
-                hoverinfo='text',
-                hovertext=f"Fx = {fx} at Node {node_id}"
-            ))
-            fig.add_trace(go.Scatter3d(
-                x=[x], y=[y], z=[z],
-                mode='markers',
-                marker=dict(size=3, color='red'),
-                showlegend=False,
-                hoverinfo='skip'
-            ))
-        if fy != 0:
-            fig.add_trace(go.Scatter3d(
-                x=[x, x], y=[y, y + fy * scale], z=[z, z],
-                mode='lines',
-                line=dict(color='green', width=3),
-                showlegend=False,
-                hoverinfo='text',
-                hovertext=f"Fy = {fy} at Node {node_id}"
-            ))
-            fig.add_trace(go.Scatter3d(
-                x=[x], y=[y], z=[z],
-                mode='markers',
-                marker=dict(size=3, color='green'),
-                showlegend=False,
-                hoverinfo='skip'
-            ))
-        if fz != 0:
-            fig.add_trace(go.Scatter3d(
-                x=[x, x], y=[y, y], z=[z, z + fz * scale],
-                mode='lines',
-                line=dict(color='blue', width=3),
-                showlegend=False,
-                hoverinfo='text',
-                hovertext=f"Fz = {fz} at Node {node_id}"
-            ))
-            fig.add_trace(go.Scatter3d(
-                x=[x], y=[y], z=[z],
-                mode='markers',
-                marker=dict(size=3, color='blue'),
-                showlegend=False,
-                hoverinfo='skip'
-            ))
+        _, node_id, x, y, z, magnitude, theta_x, theta_y, theta_z = load
+
+        fx = magnitude * cos(radians(theta_x))
+        fy = magnitude * cos(radians(theta_y))
+        fz = magnitude * cos(radians(theta_z))
+
+        end_x = x + fx * scale
+        end_y = y + fy * scale
+        end_z = z + fz * scale
+
+        fig.add_trace(go.Scatter3d(
+            x=[x, end_x],
+            y=[y, end_y],
+            z=[z, end_z],
+            mode='lines',
+            line=dict(color='orange', width=4),
+            showlegend=False,
+            hoverinfo='text',
+            hovertext=(
+                f"<b>Load</b> at Node {node_id}<br>"
+                f"Mag: {magnitude} N<br>"
+                f"θₓ: {theta_x}°, θᵧ: {theta_y}°, θ𝓏: {theta_z}°"
+            )
+        ))
+
+        # Base dot (optional)
+        fig.add_trace(go.Scatter3d(
+            x=[x],
+            y=[y],
+            z=[z],
+            mode='markers',
+            marker=dict(size=3, color='orange'),
+            showlegend=False,
+            hoverinfo='skip'
+        ))
         
 
     # 📐 Layout settings

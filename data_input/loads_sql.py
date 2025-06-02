@@ -1,7 +1,7 @@
 from data_input.db import get_connection
 from mysql.connector import Error
 
-def save_load_to_db(node_id, fx, fy, fz):
+def save_load_to_db(node_id, magnitude, theta_x, theta_y, theta_z):
     try:
         conn = get_connection()
         cursor = conn.cursor()
@@ -14,15 +14,15 @@ def save_load_to_db(node_id, fx, fy, fz):
             # Update existing load
             cursor.execute("""
                 UPDATE loads
-                SET fx = %s, fy = %s, fz = %s
+                SET magnitude = %s, theta_x = %s, theta_y = %s, theta_z = %s
                 WHERE node_id = %s
-            """, (fx, fy, fz, node_id))
+            """, (magnitude, theta_x, theta_y, theta_z, node_id))
         else:
             # Insert new load
             cursor.execute("""
-                INSERT INTO loads (node_id, fx, fy, fz)
-                VALUES (%s, %s, %s, %s)
-            """, (node_id, fx, fy, fz))
+                INSERT INTO loads (node_id, magnitude, theta_x, theta_y, theta_z)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (node_id, magnitude, theta_x, theta_y, theta_z))
 
         conn.commit()
         return True
@@ -40,7 +40,7 @@ def fetch_loads_from_db():
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT l.id, n.id, n.x, n.y, n.z, l.fx, l.fy, l.fz
+            SELECT l.id, n.id, n.x, n.y, n.z, l.magnitude, l.theta_x, l.theta_y, l.theta_z
             FROM loads l
             JOIN nodes n ON l.node_id = n.id
         """)

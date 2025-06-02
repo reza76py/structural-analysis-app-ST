@@ -30,9 +30,11 @@ CREATE TABLE IF NOT EXISTS supports (
 CREATE TABLE IF NOT EXISTS loads (
     id INT AUTO_INCREMENT PRIMARY KEY,
     node_id INT NOT NULL,
-    fx FLOAT DEFAULT 0,
-    fy FLOAT DEFAULT 0,
-    fz FLOAT DEFAULT 0,
+    magnitude FLOAT NOT NULL,
+    theta_x FLOAT NOT NULL,  -- degrees from X-axis
+    theta_y FLOAT NOT NULL,  -- degrees from Y-axis
+    theta_z FLOAT NOT NULL,  -- degrees from Z-axis
     FOREIGN KEY (node_id) REFERENCES nodes(id),
     UNIQUE (node_id)
 );
+

@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-from math import cos, radians
+from math import cos, radians, sqrt
 
 def plot_space_truss(nodes, elements, supports=[], loads=[]):
     if not nodes:
@@ -102,44 +102,57 @@ def plot_space_truss(nodes, elements, supports=[], loads=[]):
             ))
 
 
-        scale = 0.2  # Increased for visibility
+    arrow_len = 2  # constant shaft length
+    cone_size = 0.5  # size of the arrowhead (cone)
 
-    # 🟠 Loads - Single vector from magnitude + direction
-    scale = 0.2
     for load in loads:
         _, node_id, x, y, z, magnitude, theta_x, theta_y, theta_z = load
 
-        fx = magnitude * cos(radians(theta_x))
-        fy = magnitude * cos(radians(theta_y))
-        fz = magnitude * cos(radians(theta_z))
+        # Direction cosines from angles
+        dx = cos(radians(theta_x))
+        dy = cos(radians(theta_y))
+        dz = cos(radians(theta_z))
 
-        end_x = x + fx * scale
-        end_y = y + fy * scale
-        end_z = z + fz * scale
+        norm = sqrt(dx**2 + dy**2 + dz**2)
+        if norm == 0:
+            continue
 
+        ux, uy, uz = dx / norm, dy / norm, dz / norm
+
+        # Shaft endpoint (base to tip)
+        tip_x = x + ux * arrow_len
+        tip_y = y + uy * arrow_len
+        tip_z = z + uz * arrow_len
+
+        # 🟠 Shaft line
         fig.add_trace(go.Scatter3d(
-            x=[x, end_x],
-            y=[y, end_y],
-            z=[z, end_z],
+            x=[x, tip_x],
+            y=[y, tip_y],
+            z=[z, tip_z],
             mode='lines',
-            line=dict(color='orange', width=4),
+            line=dict(color='green', width=6),
             showlegend=False,
             hoverinfo='text',
             hovertext=(
-                f"<b>Load</b> at Node {node_id}<br>"
-                f"Mag: {magnitude} N<br>"
-                f"θₓ: {theta_x}°, θᵧ: {theta_y}°, θ𝓏: {theta_z}°"
+                f"<b>Load at Node {node_id}</b><br>"
+                f"Magnitude: {magnitude} N<br>"
+                f"θₓ={theta_x}°, θᵧ={theta_y}°, θ𝓏={theta_z}°"
             )
         ))
 
-        # Base dot (optional)
-        fig.add_trace(go.Scatter3d(
-            x=[x],
-            y=[y],
-            z=[z],
-            mode='markers',
-            marker=dict(size=3, color='orange'),
-            showlegend=False,
+        # 🔺 Arrowhead as a cone
+        fig.add_trace(go.Cone(
+            x=[tip_x],
+            y=[tip_y],
+            z=[tip_z],
+            u=[ux],
+            v=[uy],
+            w=[uz],
+            sizemode='absolute',
+            sizeref=cone_size,
+            anchor='tip',
+            showscale=False,
+            colorscale=[[0, 'green'], [1, 'green']],
             hoverinfo='skip'
         ))
         

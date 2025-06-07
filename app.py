@@ -1,3 +1,6 @@
+import os
+os.environ["STREAMLIT_SERVER_BASE_URL_PATH"] = "/space-truss"
+
 import streamlit as st
 from pages_logic.node_input_page import render_node_input
 from pages_logic.element_input_page import render_element_input

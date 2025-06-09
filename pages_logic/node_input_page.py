@@ -22,10 +22,12 @@ def render_node_input():
         st.stop()
 
     if st.button("➕ Add Node"):
-        save_node_to_db(x, y, z)
+        save_node_to_db(st.session_state["project_id"], x, y, z)
+
         st.success(f"✅ Node saved to MySQL: ({x}, {y}, {z})")
 
     st.subheader("📋 Saved Nodes from Database:")
-    nodes = fetch_nodes_from_db()
+    nodes = nodes = fetch_nodes_from_db(st.session_state["project_id"])
+
     for node in nodes:
         st.write(f"Node {node[0]}: (X={node[1]}, Y={node[2]}, Z={node[3]})")

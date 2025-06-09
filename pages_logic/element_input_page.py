@@ -5,8 +5,14 @@ from data_input.elements_sql import save_element_to_db, fetch_elements_from_db
 def render_element_input():
     st.title("🧩 Element Input")
 
-    # ✅ Load nodes from MySQL
-    nodes = fetch_nodes_from_db()
+    # ✅ Ensure user is in a project
+    project_id = st.session_state.get("project_id")
+    if not project_id:
+        st.error("❌ No project selected.")
+        st.stop()
+
+    # ✅ Load nodes from MySQL (for this project only)
+    nodes = fetch_nodes_from_db(project_id)
 
     if len(nodes) < 2:
         st.warning("Please enter at least 2 nodes before defining elements.")
@@ -26,20 +32,20 @@ def render_element_input():
     end_label = st.selectbox("End Node", options=list(end_options.keys()), key="end_node")
     end_id = end_options[end_label]
 
-
-    start_id = node_options[start_label]
-    end_id = node_options[end_label]
-
+    # 💾 Save Element
     if st.button("➕ Add Element"):
         if start_id == end_id:
             st.warning("Start and end nodes must be different.")
-        elif save_element_to_db(start_id, end_id):
-            st.success(f"Element added: Node {start_id} → Node {end_id}")
+        elif save_element_to_db(project_id, start_id, end_id):
+            st.success(f"✅ Element added: Node {start_id} → Node {end_id}")
         else:
-            st.warning("Element (or reverse) already exists!")
+            st.warning("⚠️ Element (or reverse) already exists!")
 
-    # Display from DB
+    # 📋 Display existing elements for the current project
     st.subheader("📋 Current Elements (from MySQL):")
-    elements = fetch_elements_from_db()
-    for elem in elements:  # elem is now (id, start, end)
-        st.write(f"Element {elem[0]}: Node {elem[1]} → Node {elem[2]}")
+    elements = fetch_elements_from_db(project_id)
+    if not elements:
+        st.info("No elements defined yet.")
+    else:
+        for elem in elements:  # elem = (id, start_node_id, end_node_id)
+            st.write(f"Element {elem[0]}: Node {elem[1]} → Node {elem[2]}")

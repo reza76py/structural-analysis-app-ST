@@ -5,8 +5,14 @@ from data_input.supports_sql import save_support_to_db, fetch_supports_from_db
 def render_support_input():
     st.title("🧱 Support Input")
 
-    # ✅ Fetch nodes
-    nodes = fetch_nodes_from_db()
+    # ✅ Ensure project is selected
+    project_id = st.session_state.get("project_id")
+    if not project_id:
+        st.error("❌ No project selected.")
+        st.stop()
+
+    # ✅ Fetch nodes for this project
+    nodes = fetch_nodes_from_db(project_id)
     if not nodes:
         st.warning("Please enter nodes before assigning supports.")
         st.stop()
@@ -27,14 +33,14 @@ def render_support_input():
 
     # 💾 Save Support
     if st.button("➕ Add / Update Support"):
-        if save_support_to_db(selected_node_id, x_rest, y_rest, z_rest):
+        if save_support_to_db(project_id, selected_node_id, x_rest, y_rest, z_rest):
             st.success(f"✅ Support saved for Node {selected_node_id}")
         else:
             st.error("❌ Failed to save support.")
 
-    # 📋 Show current supports
+    # 📋 Show current supports for this project
     st.subheader("📋 Saved Supports from Database:")
-    supports = fetch_supports_from_db()
+    supports = fetch_supports_from_db(project_id)
     if not supports:
         st.info("No supports defined yet.")
     else:

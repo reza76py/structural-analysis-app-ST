@@ -14,10 +14,12 @@ def render_structure_view():
     st.title("🏗️ Structure Visualization")
 
     # ✅ Load data from MySQL
-    nodes = fetch_nodes_from_db()
-    elements = fetch_elements_from_db()
-    supports = fetch_supports_from_db()
-    loads = fetch_loads_from_db()
+    project_id = st.session_state.get("project_id")
+    nodes = fetch_nodes_from_db(project_id)
+    elements = fetch_elements_from_db(project_id)
+    supports = fetch_supports_from_db(project_id)
+    loads = fetch_loads_from_db(project_id)
+
 
     # ✅ View selection
     view_option = st.sidebar.radio("Choose view:", ["3D", "2D_xy", "2D_xz", "2D_yz"], key="view_option")

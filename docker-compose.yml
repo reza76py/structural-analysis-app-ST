@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-      - "8501:8501"
+      - "8502:8501"
     environment:
       - IN_DOCKER=true
     depends_on:
@@ -21,7 +21,7 @@ services:
       MYSQL_PASSWORD: 934
       MYSQL_ROOT_PASSWORD: root
     volumes:
-      - mysql_data:/var/lib/mysql  # Persistent storage
+      - mysql_data:/var/lib/mysql
       - ./db_init:/docker-entrypoint-initdb.d
     networks:
       - space_truss_net

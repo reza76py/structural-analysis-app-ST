@@ -49,9 +49,9 @@ CREATE TABLE IF NOT EXISTS loads (
     project_id INT NOT NULL,
     node_id INT NOT NULL,
     magnitude FLOAT NOT NULL,
-    theta_x FLOAT NOT NULL,  -- degrees from X-axis
-    theta_y FLOAT NOT NULL,  -- degrees from Y-axis
-    theta_z FLOAT NOT NULL,  -- degrees from Z-axis
+    theta_x FLOAT NOT NULL,
+    theta_y FLOAT NOT NULL,
+    theta_z FLOAT NOT NULL,
     FOREIGN KEY (node_id) REFERENCES nodes(id),
     FOREIGN KEY (project_id) REFERENCES projects(id),
     UNIQUE (node_id, project_id)
